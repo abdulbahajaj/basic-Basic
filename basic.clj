@@ -279,8 +279,11 @@
                  slurp
                  (tokenize (create-ctx))
                  emit)]
-    (println ctx)
     (spit "out.asm"
           (str (slurp "runtime.asm")
                (apply str (repeat (:var-count ctx) "push 0;\n"))
                (apply str (-> ctx :uvm-code))))))
+
+(if (empty? *command-line-args*)
+  (print "Provide a sourcefile as an argument. e.g. clj -M basic.clj source.clj")
+  (compile-src! (first *command-line-args*)))
