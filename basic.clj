@@ -34,9 +34,7 @@
    (if-let [[rem token] (some (partial get-token input) token-patterns)]
      (if (empty? rem) [token]
        (lazy-seq (cons token (token-seq rem))))
-     (do
-       (println input)
-       (throw (Exception. (str "unrecognized token" input)))))))
+     (throw (Exception. (str "unrecognized token" input))))))
 
 (defn tokenize [ctx input]
   (assoc ctx :tokens
