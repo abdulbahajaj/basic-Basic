@@ -6,7 +6,7 @@ It supports the following commands:
 | command | syntax                  | description                                              |
 | LET     | cnum LET v e            | Assigns variable v to the value of expression e          |
 | GOTO    | cnum GOTO 'cnum         | Goes to the command numbered 'cnum                       |
-| IF      | cnum IF p THEN t ELSE e | if p is not 0 execute t else execute e                   |
+| IF      | cnum IF p THEN t ELSE e | if p is not 0 execute command t else execute command e   |
 | PLOT    | cnum PLOT x y color     | Fills the pixel at x,y with the given color              |
 | FOR     | FOR i init TO end       | Repeats the commands between the FOR and the NEXT        |
 |         | NEXT i                  | while end >= i. i is incremented once in every iteration |
