@@ -2,12 +2,8 @@
 
 (defn create-ctx []
   {:tokens []
-   :labels #{}
-   :commands []
-   :asts []
    :var-count 0
    :env {}
-   :insts []
    :uvm-code []})
 
 (def token-patterns
