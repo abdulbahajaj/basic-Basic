@@ -11,12 +11,6 @@ It supports the following commands:
 | FOR     | FOR i init TO end       | Repeats the commands between the FOR and the NEXT        |
 |         | NEXT i                  | while end >= i. i is incremented once in every iteration |
 
-* Usage
-The following command will compile example.bas to UVM assembly.
-#+begin_src bash
-clj -M basic.clj example.bas
-#+end_src
-
 * Example
 look at example.bas for an example. It will produce the following image
 
@@ -34,6 +28,12 @@ look at example.bas for an example. It will produce the following image
 
 [[example-output.png]]
 
+
+* Usage
+The following command will compile example.bas to UVM assembly.
+#+begin_src bash
+clj -M basic.clj example.bas
+#+end_src
 
 * Reqs
 + UVM (https://github.com/maximecb/uvm)
