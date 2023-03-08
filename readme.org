@@ -3,31 +3,80 @@ basic Basic is a one pass basic Basic compiler for a basic dialect of Basic.
 
 It supports the following commands:
 
-| command | syntax                  | description                                              |
-| LET     | cnum LET v e            | Assigns variable v to the value of expression e          |
-| GOTO    | cnum GOTO 'cnum         | Goes to the command numbered 'cnum                       |
-| IF      | cnum IF p THEN t ELSE e | if p is not 0 execute command t else execute command e   |
-| PLOT    | cnum PLOT x y color     | Fills the pixel at x,y with the given color              |
-| FOR     | FOR i init TO end       | Repeats the commands between the FOR and the NEXT        |
-|         | NEXT i                  | while end >= i. i is incremented once in every iteration |
+| command | syntax                                                                 | description                                                                                                |
+| LET     | cnum LET v e                                                           | Assigns variable v to the value of expression e                                                            |
+| GOTO    | cnum GOTO 'cnum                                                        | Goes to the command numbered 'cnum                                                                         |
+| IF      | cnum IF p THEN t ELSE e                                                | if p is not 0 execute command t else execute command e                                                     |
+| PLOT    | cnum PLOT x y color                                                    | Fills the pixel at x,y with the given color                                                                |
+| FOR     | cnum FOR i init TO end ...new lines containing commands... cnum NEXT i | Repeats the commands between the FOR and the NEXT while end >= i. i is incremented once in every iteration |
 
 * Example
 look at example.bas for an example. It will produce the following image
 
 #+begin_src basic
-0 FOR c 0 TO 74
-10 IF 38 > c THEN LET color 16711680 ELSE LET color 255
-20 PLOT (75-c) (75-c) color
-30 PLOT c (75-c) color
-40 PLOT 37 c color
-50 PLOT 38 c color
-60 PLOT c 37 color
-70 PLOT c 38 color
-80 NEXT c
+LET red 16711680 
+LET blue 7574225 
+LET white 16777215
+LET SKY 15919822
+LET brown 7355966
+LET lightbrown 9393750
+LET metal 10921638
+
+FOR x 0 TO 74
+FOR y 0 TO 74
+IF y > 50 THEN LET color blue ELSE LET color white
+PLOT x y color
+NEXT y
+NEXT x
+
+LET len 15
+FOR x 0 TO len
+FOR y x TO len
+FOR f (5+x) TO 75-(5+x)
+PLOT f (40+y) brown
+NEXT f
+PLOT (5+x) (40+y) lightbrown
+PLOT 75-(5+x) (40+y) lightbrown
+NEXT y
+NEXT x
+
+FOR x 20 TO 55 
+PLOT x 55 lightbrown
+NEXT x
+
+FOR x 5 TO 70
+PLOT x 40 lightbrown
+NEXT x
+
+FOR y 10 TO 39
+PLOT 25 y metal
+PLOT 24 y metal
+NEXT y
+
+FOR x 26 TO 55
+FOR y 10 TO 25
+PLOT x y red
+NEXT y
+NEXT x
+#+end_src
+
+[[pirate-ship.png]]
+
+#+begin_src basic
+LET red 16711680 
+LET blue 255
+FOR c 0 TO 74
+IF 38 > c THEN LET color red ELSE LET color blue
+PLOT (75-c) (75-c) color
+PLOT c (75-c) color
+PLOT 37 c color
+PLOT 38 c color
+PLOT c 37 color
+PLOT c 38 color
+NEXT c
 #+end_src
 
 [[example-output.png]]
-
 
 * Usage
 The following command will compile example.bas to UVM assembly.
