@@ -83,6 +83,7 @@ The following command will compile example.bas to UVM assembly.
 #+begin_src bash
 clj -M basic.clj example.bas
 #+end_src
+You will need to download UVM and use it to run the generated assembly.
 
 * Reqs
 + UVM (https://github.com/maximecb/uvm)
