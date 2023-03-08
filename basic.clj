@@ -4,7 +4,8 @@
   {:tokens []
    :var-count 0
    :env {}
-   :uvm-code []})
+   :uvm-code []
+   :loops {}})
 
 (def token-patterns
   [[::skip #"^ "]
@@ -48,8 +49,7 @@
     dst))
 
 (defn emit-code [ctx & strs]
-  (update ctx
-          :uvm-code conj (apply str (conj strs "\n"))))
+  (update ctx :uvm-code conj (apply str (conj strs "\n"))))
 
 (defn emit-push [ctx n]
   (emit-code ctx "push " (str n) ";"))
@@ -195,7 +195,10 @@
           (-> ctx
               (emit-get-local val-pos)
               (emit-set-local stack-pos))
-          (assoc-in ctx [:env kw-sym :stack-pos] val-pos))
+          (let [[ctx stack-pos] (alloc-var ctx)
+                ctx (emit-get-local ctx val-pos)
+                ctx (emit-set-local ctx stack-pos)]
+            (assoc-in ctx [:env kw-sym :stack-pos] stack-pos)))
      tokens]))
 
 (defmethod emit-cmd "GOTO" [ctx _ tokens]
@@ -203,7 +206,7 @@
     [(emit-goto ctx dst-label) tokens]))
 
 (defmethod emit-cmd "IF" [ctx _ tokens]
-  (let [else-label (str (gensym "then__"))
+  (let [else-label (str (gensym "else__"))
         end-label (str (gensym "end__"))
 
         [pred-pos ctx tokens] (emit-equality ctx tokens)
@@ -231,11 +234,21 @@
     [(emit-call ctx "draw_point" [x-pos y-pos color-pos])
      tokens]))
 
-(defn get-for-start-label [var-name]
-  (str "for_label_" var-name))
+(defn get-loop-label [ctx var-name]
+  (get-in ctx [:loops var-name]))
 
-(defn get-for-end-label [var-name]
-  (str "end_for_label_" var-name))
+(defn get-for-start-label [ctx var-name]
+  (let [label (or (get-loop-label ctx var-name)
+                  (str (gensym (str "for_label_" var-name))))
+        ctx (assoc-in ctx [:loops var-name] label)]
+    [ctx label]))
+
+(defn get-for-end-label [ctx var-name]
+  (let [label (get-loop-label ctx var-name)
+        _ (assert (some? label)
+                  (str "loop with variable " var-name " doesn't exist"))
+        label (str "end_" label)]
+    [ctx label]))
 
 (defmethod emit-cmd "FOR" [ctx _ tokens]
   (let [[{var-name :str} tokens] (expect-sym tokens) ;; verify
@@ -244,29 +257,40 @@
         [end-pos ctx tokens] (emit-equality ctx tokens)
         [ctx sum-pos] (alloc-var ctx)
         ctx (assoc-in ctx [:env (keyword var-name) :stack-pos] init-pos)
-        ctx (emit-label ctx (get-for-start-label var-name))
+        _ (assert (nil? (get-loop-label ctx var-name))
+                  (str "Loop variable " var-name " already exist in a parent loop"))
+        [ctx start-label] (get-for-start-label ctx var-name)
+        ctx (emit-label ctx start-label)
         ctx (emit-binary-op ctx ::> sum-pos init-pos end-pos)
-        ctx (emit-branch-if ctx sum-pos (get-for-end-label var-name))]
+        [ctx end-label] (get-for-end-label ctx var-name)
+        ctx (emit-branch-if ctx sum-pos end-label)]
     [ctx tokens]))
 
 (defmethod emit-cmd "NEXT" [ctx _ tokens]
   (let [[{var-name :str} _] (expect-sym tokens)
-        [var-pos ctx tokens] (deref-sym ctx tokens)]
+        [var-pos ctx tokens] (deref-sym ctx tokens)
+        [ctx start-label] (get-for-start-label ctx var-name)
+        [ctx end-label] (get-for-end-label ctx var-name)
+        ctx (assoc-in ctx [:loops var-name] nil)
+        ]
         [(-> ctx
              (emit-inc var-pos)
-             (emit-goto (get-for-start-label var-name))
-             (emit-label (get-for-end-label var-name)))
+             (emit-goto start-label)
+             (emit-label end-label))
          tokens]))
 
 (defn emit [{:keys [tokens] :as ctx}]
   (loop [ctx ctx
-         tokens tokens]
+         [{:keys [type] label :str} & rem :as tokens] tokens]
     (if (empty? tokens)
       (-> ctx
           (emit-push 0)
           (emit-code "ret;"))
-      (let [[{label :str} tokens] (expect-num tokens)
-            ctx (emit-label ctx label)
+      (let [[ctx tokens]
+            (if (= type ::num)
+              [(emit-label ctx label) rem]
+              [ctx tokens])
+            
             [cmd tokens] (expect-sym tokens)
             [ctx tokens] (emit-cmd ctx cmd tokens)
             tokens (drop-while (fn [{:keys [type]}] (= type ::new-line)) tokens)]
