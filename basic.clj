@@ -285,6 +285,9 @@
              (emit-label end-label))
          tokens]))
 
+(defmethod emit-cmd :default [ctx cmd tokens]
+  (throw (Exception. (str "invalid command: " cmd))))
+
 (defn emit [{:keys [tokens] :as ctx}]
   (loop [ctx ctx
          [{:keys [type] label :str} & rem :as tokens] tokens]
