@@ -21,8 +21,8 @@
    [::right-paren #"^\)"]
    [::- #"^\-"]
    [::* #"^\*"]
-   [::! #"^/"]
-   [::div #"^\!"]
+   [::div #"^/"]
+   [::! #"^\!"]
    [::new-line #"^\n"]
    [::sym #"^[a-zA-Z]+"]])
 
@@ -159,7 +159,7 @@
     ::num (alloc-num ctx tokens)
     ::sym (deref-sym ctx tokens)
     ::left-paren
-    (let [[pos ctx [{:keys [type]} & rem]] (emit-equality ctx rem)]
+    (let [[pos ctx [{:keys [type] :as cur-token} & rem]] (emit-equality ctx rem)]
       (assert (= type ::right-paren) (str "bracket is not closed: " cur-token))
       [pos ctx rem])))
 
@@ -252,11 +252,18 @@
 
 (defmethod emit-cmd "FOR" [ctx _ tokens]
   (let [[{var-name :str} tokens] (expect-sym tokens) ;; verify
-        [init-pos ctx tokens] (emit-equality ctx tokens)
+        [val-pos ctx tokens] (emit-equality ctx tokens)
+        kw-var-name (keyword var-name)
+        [ctx init-pos] (if-let [pos (get-stack-pos ctx kw-var-name)]
+                         [ctx pos]
+                         (alloc-var ctx))
+        ctx (emit-get-local ctx val-pos)
+        ctx (emit-set-local ctx init-pos)
+
         [_ tokens] (expect-sym tokens "TO")
         [end-pos ctx tokens] (emit-equality ctx tokens)
         [ctx sum-pos] (alloc-var ctx)
-        ctx (assoc-in ctx [:env (keyword var-name) :stack-pos] init-pos)
+        ctx (assoc-in ctx [:env kw-var-name :stack-pos] init-pos)
         _ (assert (nil? (get-loop-label ctx var-name))
                   (str "Loop variable " var-name " already exist in a parent loop"))
         [ctx start-label] (get-for-start-label ctx var-name)
