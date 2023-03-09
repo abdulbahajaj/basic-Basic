@@ -7,8 +7,8 @@ LET lightbrown 9393750
 LET metal 10921638
 LET lightGrey 12105912
 
-LET height 400
-LET width 400
+LET height 800
+LET width 800
 LET seaLevel (height/4)*3
 
 FOR x 0 TO width-1
@@ -21,7 +21,7 @@ NEXT x
 LET startAt width/20
 LET diagonalLen width/6
 LET sink 25
-LET borderWidth 2
+LET borderWidth 4
 
 FOR c 0 TO diagonalLen
 
@@ -57,24 +57,28 @@ NEXT depth
 NEXT x
 
 LET poleXStart startAt*4+10
-FOR y height/3-50 TO boatTop-3
-PLOT poleXStart-1 y lightGrey
-PLOT poleXStart-2 y lightGrey
+LET poleWidth 5
+FOR y height/3-50 TO boatTop-borderWidth-1
 
-FOR depth 0 TO 4
+FOR depth 0 TO 3
+PLOT poleXStart-depth y lightGrey
+PLOT poleXStart-depth y lightGrey
+NEXT depth
+
+FOR depth 0 TO poleWidth
 PLOT poleXStart+depth y metal
 NEXT depth
 NEXT y
 
 LET flagEnd width/2 + poleXStart 
 FOR y height/3-50 TO boatTop-80
-FOR x poleXStart + 5 TO flagEnd
+FOR x poleXStart + poleWidth + 1 TO flagEnd
 PLOT x y red
 NEXT x
 NEXT y
 
 FOR depth 0 TO 2
-FOR x poleXStart + 5 TO flagEnd
+FOR x poleXStart + poleWidth + 1 TO flagEnd
 PLOT x y+depth lightRed
 NEXT x
 NEXT depth

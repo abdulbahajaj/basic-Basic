@@ -1,6 +1,6 @@
 LET red 16711680 
 LET blue 255
-LET width 400
+LET width 800
 LET halfWidth width/2
 
 FOR c 0 TO width-1
