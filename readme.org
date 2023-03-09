@@ -20,7 +20,7 @@ LET blue 7574225
 LET white 16777215
 LET brown 7355966
 LET lightbrown 9393750
-LET metal 10921638
+LET grey 10921638
 LET lightGrey 12105912
 
 LET height 800
@@ -82,7 +82,7 @@ PLOT poleXStart-depth y lightGrey
 NEXT depth
 
 FOR depth 0 TO poleWidth
-PLOT poleXStart+depth y metal
+PLOT poleXStart+depth y grey
 NEXT depth
 NEXT y
 
