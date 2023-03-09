@@ -20,7 +20,7 @@ FRAME_WIDTH:
 
 	.align 8;
 POINT_SIZE:
-	.u64 2;
+	.u64 1;
 
 	.align 8;
 __CONST_STR_0__:
