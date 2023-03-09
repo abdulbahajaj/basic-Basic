@@ -14,50 +14,86 @@ It supports the following commands:
 look at example.bas for an example. It will produce the following image
 
 #+begin_src basic
-LET red 16711680 
+LET red 13583410
+LET lightRed 16541523
 LET blue 7574225 
 LET white 16777215
-LET SKY 15919822
 LET brown 7355966
 LET lightbrown 9393750
 LET metal 10921638
+LET lightGrey 12105912
 
-FOR x 0 TO 74
-FOR y 0 TO 74
-IF y > 50 THEN LET color blue ELSE LET color white
+LET height 400
+LET width 400
+LET seaLevel (height/4)*3
+
+FOR x 0 TO width-1
+FOR y 0 TO height-1
+IF y > seaLevel THEN LET color blue ELSE LET color white
 PLOT x y color
 NEXT y
 NEXT x
 
-LET len 15
-FOR x 0 TO len
-FOR y x TO len
-FOR f (5+x) TO 75-(5+x)
-PLOT f (40+y) brown
+LET startAt width/20
+LET diagonalLen width/6
+LET sink 25
+LET borderWidth 2
+
+FOR c 0 TO diagonalLen
+
+LET y (seaLevel +  c) - diagonalLen + sink
+
+FOR f startAt + c TO width - (startAt + c) 
+PLOT f y brown
 NEXT f
-PLOT (5+x) (40+y) lightbrown
-PLOT 75-(5+x) (40+y) lightbrown
+LET x startAt + c
+FOR depth 0 TO borderWidth
+LET ywithDepth y + depth
+PLOT x ywithDepth lightbrown
+PLOT width - x ywithDepth lightbrown
+NEXT depth
+
+NEXT c
+
+
+LET lowestX (startAt + diagonalLen)
+LET y seaLevel + sink
+FOR x lowestX TO (width - lowestX)
+FOR depth 0 TO borderWidth
+PLOT x y + depth   lightbrown
+NEXT depth
+NEXT x
+
+LET boatTop seaLevel - diagonalLen + sink
+
+FOR x startAt TO (width - startAt)
+FOR depth 0 TO borderWidth
+PLOT x boatTop-depth lightbrown
+NEXT depth
+NEXT x
+
+LET poleXStart startAt*4+10
+FOR y height/3-50 TO boatTop-3
+PLOT poleXStart-1 y lightGrey
+PLOT poleXStart-2 y lightGrey
+
+FOR depth 0 TO 4
+PLOT poleXStart+depth y metal
+NEXT depth
 NEXT y
-NEXT x
 
-FOR x 20 TO 55 
-PLOT x 55 lightbrown
-NEXT x
-
-FOR x 5 TO 70
-PLOT x 40 lightbrown
-NEXT x
-
-FOR y 10 TO 39
-PLOT 25 y metal
-PLOT 24 y metal
-NEXT y
-
-FOR x 26 TO 55
-FOR y 10 TO 25
+LET flagEnd width/2 + poleXStart 
+FOR y height/3-50 TO boatTop-80
+FOR x poleXStart + 5 TO flagEnd
 PLOT x y red
-NEXT y
 NEXT x
+NEXT y
+
+FOR depth 0 TO 2
+FOR x poleXStart + 5 TO flagEnd
+PLOT x y+depth lightRed
+NEXT x
+NEXT depth
 #+end_src
 
 [[pirate-ship.png]]
@@ -65,14 +101,17 @@ NEXT x
 #+begin_src basic
 LET red 16711680 
 LET blue 255
-FOR c 0 TO 74
-IF 38 > c THEN LET color red ELSE LET color blue
-PLOT (75-c) (75-c) color
-PLOT c (75-c) color
-PLOT 37 c color
-PLOT 38 c color
-PLOT c 37 color
-PLOT c 38 color
+LET width 400
+LET halfWidth width/2
+
+FOR c 0 TO width-1
+IF halfWidth > c THEN LET color red ELSE LET color blue
+PLOT (width-c) (width-c) color
+PLOT c (width-c) color
+PLOT halfWidth c color
+PLOT halfWidth+1 c color
+PLOT c halfWidth color
+PLOT c halfWidth+1 color
 NEXT c
 #+end_src
 
