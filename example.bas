@@ -1,11 +1,14 @@
 LET red 16711680 
 LET blue 255
-FOR c 0 TO 74
-IF 38 > c THEN LET color red ELSE LET color blue
-PLOT (75-c) (75-c) color
-PLOT c (75-c) color
-PLOT 37 c color
-PLOT 38 c color
-PLOT c 37 color
-PLOT c 38 color
+LET width 400
+LET halfWidth width/2
+
+FOR c 0 TO width-1
+IF halfWidth > c THEN LET color red ELSE LET color blue
+PLOT (width-c) (width-c) color
+PLOT c (width-c) color
+PLOT halfWidth c color
+PLOT halfWidth+1 c color
+PLOT c halfWidth color
+PLOT c halfWidth+1 color
 NEXT c
