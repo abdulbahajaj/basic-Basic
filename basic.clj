@@ -35,13 +35,13 @@
    (if-let [[rem token] (some (partial get-token input) token-patterns)]
      (if (empty? rem) [token]
        (lazy-seq (cons token (token-seq rem))))
-     (throw (Exception. (str "unrecognized token" input))))))
+     (throw (Exception. (str "unrecognized token: " input))))))
 
 (defn tokenize [ctx input]
-  (assoc ctx :tokens
-         (->> input
-              token-seq
-              (remove #(= ::skip (:type %))))))
+  (->> input
+       token-seq
+       (remove #(= ::skip (:type %)))
+       (assoc ctx :tokens)))
 
 (defn get-stack-pos [ctx dst]
   (if (keyword? dst)
@@ -278,8 +278,7 @@
         [var-pos ctx tokens] (deref-sym ctx tokens)
         [ctx start-label] (get-for-start-label ctx var-name)
         [ctx end-label] (get-for-end-label ctx var-name)
-        ctx (assoc-in ctx [:loops var-name] nil)
-        ]
+        ctx (assoc-in ctx [:loops var-name] nil)]
         [(-> ctx
              (emit-inc var-pos)
              (emit-goto start-label)
