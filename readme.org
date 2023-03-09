@@ -19,7 +19,7 @@ LET lightRed 16541523
 LET blue 7574225 
 LET white 16777215
 LET brown 7355966
-LET lightbrown 9393750
+LET lightBrown 9393750
 LET grey 10921638
 LET lightGrey 12105912
 
@@ -49,8 +49,8 @@ NEXT f
 LET x startAt + c
 FOR depth 0 TO borderWidth
 LET ywithDepth y + depth
-PLOT x ywithDepth lightbrown
-PLOT width - x ywithDepth lightbrown
+PLOT x ywithDepth lightBrown
+PLOT width - x ywithDepth lightBrown
 NEXT depth
 
 NEXT c
@@ -60,7 +60,7 @@ LET lowestX (startAt + diagonalLen)
 LET y seaLevel + sink
 FOR x lowestX TO (width - lowestX)
 FOR depth 0 TO borderWidth
-PLOT x y + depth   lightbrown
+PLOT x y + depth   lightBrown
 NEXT depth
 NEXT x
 
@@ -68,7 +68,7 @@ LET boatTop seaLevel - diagonalLen + sink
 
 FOR x startAt TO (width - startAt)
 FOR depth 0 TO borderWidth
-PLOT x boatTop-depth lightbrown
+PLOT x boatTop-depth lightBrown
 NEXT depth
 NEXT x
 
