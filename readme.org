@@ -11,7 +11,7 @@ It supports the following commands:
 | FOR     | cnum FOR i init TO end ...new lines containing commands... cnum NEXT i | Repeats the commands between the FOR and the NEXT while end >= i. i is incremented once in every iteration |
 
 * Example
-look at example.bas for an example. It will produce the following image
+look at pirate-ship.bas for an example. It will produce the following image
 
 #+begin_src basic
 LET red 13583410
